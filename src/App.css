@@ -129,43 +129,51 @@
 .error { color: #b00020; }
 
 
+/* ...tu CSS existente ... */
+
+/* Accessible visible focus para todos los elementos interactivos */
 :focus, :focus-visible {
   outline: 3px solid #005fcc; /* azul fuerte para contraste */
   outline-offset: 2px;
 }
 
-/* botones interactivos mejor contraste */
+/* Botones interactivos con buen contraste */
 button, input[type="text"], select, textarea {
   background-color: #005fcc; /* azul fuerte */
   color: #fff;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
 }
 
 button:hover, input[type="text"]:hover, select:hover, textarea:hover {
   background-color: #0041a8; /* azul más oscuro al hover */
 }
 
-/* productos con borde más visible al foco */
+/* Tarjetas de productos con borde visible al foco */
 .product-card:focus-within {
   border: 2px solid #005fcc;
   box-shadow: 0 0 0 3px rgba(0, 95, 204, 0.3);
 }
 
-/* imagen placeholder más contraste */
+/* Imagen placeholder más contraste */
 .img-placeholder {
   background-color: #ccc;
 }
 
-/* mejora contraste de feedback aria-live */
+/* Feedback aria-live */
 .sr-aria-live {
+  margin-top: 0.25rem;
   color: #111;
   font-weight: 500;
 }
 
-/* mantener buen contraste en estados de info y error */
+/* Estados de info y error con contraste adecuado */
 .info { color: #222; }
 .error { color: #b00020; font-weight: bold; }
 
-/* accesibilidad: focus visible en enlaces */
+/* Enlaces accesibles */
 a:focus, a:focus-visible {
   outline: 3px solid #005fcc;
   outline-offset: 2px;
