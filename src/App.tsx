@@ -1,31 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom'; // React Router v6
 import './App.css';
 import Products from './Productos';
 import Modal from './Modal';
 import type { Item } from './Productos';
+import Paginacion from './Paginacion';
 
 function App() {
   const [items, setItems] = useState<Item[]>([]);
+  const [search, setSearch] = useState('');
   const [filteredItems, setFilteredItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Modal state
+  // modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  // to return focus after closing modal
   const lastFocusedElement = useRef<HTMLElement | null>(null);
 
-  // Favoritos persistentes
+
+  // favoritos persistentes
   const [favorites, setFavorites] = useState<string[]>(() => {
     const saved = localStorage.getItem('favorites');
     return saved ? JSON.parse(saved) : [];
   });
 
+  // toggle favoritos
   const toggleFavorite = (id: string) => {
     setFavorites(prev => {
       const updated = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id];
@@ -34,26 +33,13 @@ function App() {
     });
   };
 
-  // Mostrar solo favoritos o todos
+  // mostrar solo favoritos o todos
   const [showFavorites, setShowFavorites] = useState(false);
+  const displayedItems = showFavorites
+    ? filteredItems.filter(item => favorites.includes(item.id))
+    : filteredItems;
+  // Debounce handler ref (optional cleanup)
 
-  // Leer parámetros de URL al cargar
-  useEffect(() => {
-    const q = searchParams.get('q') || '';
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    setSearch(q);
-    setCurrentPage(page);
-  }, [searchParams]);
-
-  // Actualizar URL al cambiar búsqueda o página
-  useEffect(() => {
-    const params: any = {};
-    if (search) params.q = search;
-    if (currentPage !== 1) params.page = currentPage;
-    setSearchParams(params);
-  }, [search, currentPage, setSearchParams]);
-
-  // Cargar items
   useEffect(() => {
     fetch('/api/item.json')
       .then(res => {
@@ -71,46 +57,57 @@ function App() {
       });
   }, []);
 
-  // Debounce búsqueda
+  // Búsqueda con debounce 300ms
   useEffect(() => {
     const handler = setTimeout(() => {
       const searchLower = search.trim().toLowerCase();
-      const filtered = searchLower === ''
-        ? items
-        : items.filter(item => item.title.toLowerCase().includes(searchLower));
-      setFilteredItems(filtered);
-      setCurrentPage(1); // reset page al cambiar búsqueda
+      if (searchLower === '') {
+        setFilteredItems(items);
+      } else {
+        setFilteredItems(
+          items.filter(item => item.title.toLowerCase().includes(searchLower))
+        );
+      }
     }, 300);
+
     return () => clearTimeout(handler);
   }, [search, items]);
 
-  // Items a mostrar (filtrados y favoritos)
-  const displayedItems = showFavorites
-    ? filteredItems.filter(item => favorites.includes(item.id))
-    : filteredItems;
 
-  // Paginación
-  const itemsPerPage = 5;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = displayedItems.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(displayedItems.length / itemsPerPage);
+  // dentro de App()
 
-  const goToPage = (page: number) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-  };
+const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 8; // muestra 5 por página
 
-  // Modal
+// calcular índices
+const indexOfLastItem = currentPage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+const currentItems = displayedItems.slice(indexOfFirstItem, indexOfLastItem);
+
+// total de páginas
+const totalPages = Math.ceil(displayedItems.length / itemsPerPage);
+
+const goToPage = (page: number) => {
+  if (page < 1 || page > totalPages) return;
+  setCurrentPage(page);
+};
+
+  // Open modal and save the element that triggered it (to restore focus later)
   const openModal = (item: Item, triggerElement: HTMLElement | null) => {
     if (triggerElement) lastFocusedElement.current = triggerElement;
     setSelectedItem(item);
     setModalOpen(true);
+    // hide main content from screen readers while modal open (we set aria-hidden elsewhere)
   };
+
+  // Close modal and restore focus to the element that opened it
   const closeModal = () => {
     setModalOpen(false);
     setSelectedItem(null);
-    setTimeout(() => lastFocusedElement.current?.focus(), 0);
+    // restore focus after a tick to ensure modal removed
+    setTimeout(() => {
+      lastFocusedElement.current?.focus();
+    }, 0);
   };
 
   if (isLoading) return <p className="info">Cargando items...</p>;
@@ -121,8 +118,11 @@ function App() {
       <header>
         <h1>Productos de Cocina</h1>
 
+        {/* label + input */}
         <div className="search-group">
-          <label htmlFor="search-input" className="visually-hidden">Buscar productos</label>
+          <label htmlFor="search-input" className="visually-hidden">
+            Buscar productos
+          </label>
           <input
             id="search-input"
             type="text"
@@ -137,14 +137,18 @@ function App() {
           </button>
         </div>
 
+        {/* feedback */}
         <div id="search-feedback" aria-live="polite" className="sr-aria-live">
           {displayedItems.length === 0
             ? 'No se encontraron productos'
             : `${displayedItems.length} producto(s) encontrados`}
         </div>
 
+        {/* toggle favoritos */}
         <div className="favorites-toggle" style={{ marginTop: '0.5rem' }}>
-          <button onClick={() => setShowFavorites(false)} className="btn-small">Todos</button>
+          <button onClick={() => setShowFavorites(false)} className="btn-small">
+            Todos
+          </button>
           <button onClick={() => setShowFavorites(true)} className="btn-small">
             Favoritos ({favorites.length})
           </button>
@@ -152,30 +156,18 @@ function App() {
       </header>
 
       <main aria-hidden={modalOpen ? 'true' : 'false'}>
-        <Products
-          items={currentItems}
-          openModal={openModal}
-          favorites={favorites}
-          toggleFavorite={toggleFavorite}
-        />
+        <Products items={currentItems} openModal={openModal} favorites={favorites} toggleFavorite={toggleFavorite} />
       </main>
 
       {modalOpen && selectedItem && <Modal item={selectedItem} onClose={closeModal} />}
-
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-          <button
-            key={page}
-            onClick={() => goToPage(page)}
-            className={`btn-small ${currentPage === page ? 'active' : ''}`}
-            aria-label={`Ir a la página ${page}`}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
+      
+      {/* pagination */}
+      <Paginacion
+  totalPages={totalPages}
+  currentPage={currentPage}
+  goToPage={goToPage}
+/>
     </div>
   );
 }
-
 export default App;
