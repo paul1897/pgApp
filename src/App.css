@@ -40,3 +40,90 @@
 .read-the-docs {
   color: #888;
 }
+
+
+/* Visually hidden for labels accessible to screen readers */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px,1px,1px,1px);
+  white-space: nowrap;
+}
+
+/* simple layout */
+.app {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+  color: #111;
+  background: #fff;
+}
+
+/* search */
+.search-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.search-group input {
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 2px solid #333; /* buen contraste */
+  border-radius: 6px;
+}
+
+/* accessible visible focus */
+:focus, :focus-visible {
+  outline: 3px solid #005fcc; /* azul fuerte para contraste */
+  outline-offset: 2px;
+}
+
+/* buttons */
+.btn-primary, .btn-secondary, .btn-small {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #005fcc;
+  color: #fff;
+}
+.btn-secondary {
+  background: #666;
+}
+.btn-small {
+  background: #444;
+  font-size: 0.85rem;
+  padding: 6px 8px;
+}
+
+/* products */
+.product-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+  gap: 1rem;
+}
+.product-card {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #fff;
+}
+.img-placeholder {
+  width: 150px;
+  height: 150px;
+  background: #eee;
+}
+
+/* search feedback region visually subtle but readable */
+.sr-aria-live {
+  margin-top: 0.25rem;
+  color: #222;
+}
+
+/* status */
+.info { color: #333; }
+.error { color: #b00020; }

@@ -1,33 +1,69 @@
 import React from 'react';
+import type { FC } from 'react';
 
-export interface Item {
+export type Item = {
   id: string;
   title: string;
   category: string;
   price: number;
   rating: number;
   thumbnail: string;
-}
- 
+};
+
 interface ProductsProps {
   items: Item[];
+  openModal?: (item: Item, element: HTMLElement | null) => void;
 }
 
-const Products: React.FC<ProductsProps> = ({ items }) => {
+const Products: FC<ProductsProps> = ({ items, openModal }) => {
   return (
-    <div className="item-list">
+    <ul className="product-list" role="list">
       {items.map(item => (
-        <div key={item.id} className="item-card">
-          {item.thumbnail && (
-            <img src={item.thumbnail} alt={item.title} width={150} height={150} />
-          )}
-          <h2>{item.title}</h2>
-          <p>Categoria: {item.category}</p>
-          <p>Precio: ${item.price}</p>
-          <p>Rating: {item.rating}</p>
-        </div>
+        <li key={item.id} className="product-item">
+          <div
+            className="product-card"
+            tabIndex={0} // permite foco con Tab
+            onKeyDown={(e) => {
+              // Enter abre el modal (si se pasó la función)
+              if (e.key === 'Enter' && openModal) {
+                openModal(item, e.currentTarget as HTMLElement);
+              }
+            }}
+          >
+            {/* imagen con dimensiones explícitas para evitar CLS */}
+            {item.thumbnail ? (
+              <img
+                src={item.thumbnail}
+                alt={item.title}
+                width={150}
+                height={150}
+                loading="lazy"
+                style={{ objectFit: 'cover' }}
+              />
+            ) : (
+              <div className="img-placeholder" aria-hidden="true" />
+            )}
+
+            <div className="product-info">
+              <h2 className="product-title">{item.title}</h2>
+              <p className="product-category">{item.category}</p>
+              <p className="product-price">${item.price.toFixed(2)}</p>
+              <p className="product-rating">⭐ {item.rating}</p>
+
+              {/* botón visible para abrir modal (accesible por teclado y screen readers) */}
+              <button
+                type="button"
+                onClick={(e) => openModal?.(item, e.currentTarget as HTMLElement)}
+                aria-label={`Ver detalles de ${item.title}`}
+                className="btn-primary"
+              >
+                Ver detalle
+              </button>
+            </div>
+          </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
 
