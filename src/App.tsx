@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom'; // React Router v6
 import './App.css';
 import Products from './Productos';
 import Modal from './Modal';
@@ -6,20 +7,53 @@ import type { Item } from './Productos';
 
 function App() {
   const [items, setItems] = useState<Item[]>([]);
-  const [search, setSearch] = useState('');
   const [filteredItems, setFilteredItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // modal state
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-
-  // to return focus after closing modal
   const lastFocusedElement = useRef<HTMLElement | null>(null);
 
+  // Favoritos persistentes
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    const saved = localStorage.getItem('favorites');
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  // Debounce handler ref (optional cleanup)
+  const toggleFavorite = (id: string) => {
+    setFavorites(prev => {
+      const updated = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id];
+      localStorage.setItem('favorites', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Mostrar solo favoritos o todos
+  const [showFavorites, setShowFavorites] = useState(false);
+
+  // Leer parámetros de URL al cargar
+  useEffect(() => {
+    const q = searchParams.get('q') || '';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    setSearch(q);
+    setCurrentPage(page);
+  }, [searchParams]);
+
+  // Actualizar URL al cambiar búsqueda o página
+  useEffect(() => {
+    const params: any = {};
+    if (search) params.q = search;
+    if (currentPage !== 1) params.page = currentPage;
+    setSearchParams(params);
+  }, [search, currentPage, setSearchParams]);
+
+  // Cargar items
   useEffect(() => {
     fetch('/api/item.json')
       .then(res => {
@@ -37,57 +71,46 @@ function App() {
       });
   }, []);
 
-  // Búsqueda con debounce 300ms
+  // Debounce búsqueda
   useEffect(() => {
     const handler = setTimeout(() => {
       const searchLower = search.trim().toLowerCase();
-      if (searchLower === '') {
-        setFilteredItems(items);
-      } else {
-        setFilteredItems(
-          items.filter(item => item.title.toLowerCase().includes(searchLower))
-        );
-      }
+      const filtered = searchLower === ''
+        ? items
+        : items.filter(item => item.title.toLowerCase().includes(searchLower));
+      setFilteredItems(filtered);
+      setCurrentPage(1); // reset page al cambiar búsqueda
     }, 300);
-
     return () => clearTimeout(handler);
   }, [search, items]);
 
+  // Items a mostrar (filtrados y favoritos)
+  const displayedItems = showFavorites
+    ? filteredItems.filter(item => favorites.includes(item.id))
+    : filteredItems;
 
-  // dentro de App()
+  // Paginación
+  const itemsPerPage = 5;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = displayedItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(displayedItems.length / itemsPerPage);
 
-const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 5; // muestra 5 por página
+  const goToPage = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
-// calcular índices
-const indexOfLastItem = currentPage * itemsPerPage;
-const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
-
-// total de páginas
-const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-
-const goToPage = (page: number) => {
-  if (page < 1 || page > totalPages) return;
-  setCurrentPage(page);
-};
-
-  // Open modal and save the element that triggered it (to restore focus later)
+  // Modal
   const openModal = (item: Item, triggerElement: HTMLElement | null) => {
     if (triggerElement) lastFocusedElement.current = triggerElement;
     setSelectedItem(item);
     setModalOpen(true);
-    // hide main content from screen readers while modal open (we set aria-hidden elsewhere)
   };
-
-  // Close modal and restore focus to the element that opened it
   const closeModal = () => {
     setModalOpen(false);
     setSelectedItem(null);
-    // restore focus after a tick to ensure modal removed
-    setTimeout(() => {
-      lastFocusedElement.current?.focus();
-    }, 0);
+    setTimeout(() => lastFocusedElement.current?.focus(), 0);
   };
 
   if (isLoading) return <p className="info">Cargando items...</p>;
@@ -97,12 +120,9 @@ const goToPage = (page: number) => {
     <div className="app">
       <header>
         <h1>Productos de Cocina</h1>
-  
-        {/* Label accesible + input */}
+
         <div className="search-group">
-          <label htmlFor="search-input" className="visually-hidden">
-            Buscar productos
-          </label>
+          <label htmlFor="search-input" className="visually-hidden">Buscar productos</label>
           <input
             id="search-input"
             type="text"
@@ -112,75 +132,50 @@ const goToPage = (page: number) => {
             aria-label="Buscar productos"
             aria-describedby="search-feedback"
           />
-          <button
-            type="button"
-            onClick={() => setSearch('')}
-            aria-label="Limpiar búsqueda"
-            className="btn-small"
-          >
+          <button onClick={() => setSearch('')} className="btn-small" aria-label="Limpiar búsqueda">
             Limpiar
           </button>
         </div>
-  
-        {/* feedback de búsqueda - aria-live polite */}
-        <div
-          id="search-feedback"
-          aria-live="polite"
-          className="sr-aria-live"
-        >
-          {filteredItems.length === 0
+
+        <div id="search-feedback" aria-live="polite" className="sr-aria-live">
+          {displayedItems.length === 0
             ? 'No se encontraron productos'
-            : `${filteredItems.length} producto(s) encontrados`}
+            : `${displayedItems.length} producto(s) encontrados`}
+        </div>
+
+        <div className="favorites-toggle" style={{ marginTop: '0.5rem' }}>
+          <button onClick={() => setShowFavorites(false)} className="btn-small">Todos</button>
+          <button onClick={() => setShowFavorites(true)} className="btn-small">
+            Favoritos ({favorites.length})
+          </button>
         </div>
       </header>
-  
-      {/* cuando modalOpen true, marcamos el main como aria-hidden para lectores de pantalla */}
+
       <main aria-hidden={modalOpen ? 'true' : 'false'}>
-        <Products items={currentItems} openModal={openModal} />
-  
-        {/* Paginación */}
-        {totalPages > 1 && (
-          <nav
-            className="pagination"
-            aria-label="Paginación de productos"
-          >
-            <button
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              aria-label="Página anterior"
-            >
-              «
-            </button>
-  
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => goToPage(i + 1)}
-                aria-current={currentPage === i + 1 ? 'page' : undefined}
-                className={currentPage === i + 1 ? 'active' : ''}
-              >
-                {i + 1}
-              </button>
-            ))}
-  
-            <button
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              aria-label="Página siguiente"
-            >
-              »
-            </button>
-          </nav>
-        )}
+        <Products
+          items={currentItems}
+          openModal={openModal}
+          favorites={favorites}
+          toggleFavorite={toggleFavorite}
+        />
       </main>
-  
-      {/* modal accesible */}
-      {modalOpen && selectedItem && (
-        <Modal item={selectedItem} onClose={closeModal} />
-      )}
+
+      {modalOpen && selectedItem && <Modal item={selectedItem} onClose={closeModal} />}
+
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <button
+            key={page}
+            onClick={() => goToPage(page)}
+            className={`btn-small ${currentPage === page ? 'active' : ''}`}
+            aria-label={`Ir a la página ${page}`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
     </div>
   );
-  
 }
 
 export default App;

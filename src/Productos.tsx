@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import type { FC } from 'react';
 
 export type Item = {
@@ -13,10 +13,12 @@ export type Item = {
 interface ProductsProps {
   items: Item[];
   openModal?: (item: Item, element: HTMLElement | null) => void;
+  favorites: string[];
+  toggleFavorite: (id: string) => void;
 }
 
-const Products: FC<ProductsProps> = ({ items, openModal }) => {
-  return (
+const Products = ({ items, openModal, favorites, toggleFavorite }: ProductsProps) => {
+    return (
     <ul className="product-list" role="list">
       {items.map(item => (
         <li key={item.id} className="product-item">
@@ -49,7 +51,12 @@ const Products: FC<ProductsProps> = ({ items, openModal }) => {
               <p className="product-category">{item.category}</p>
               <p className="product-price">${item.price.toFixed(2)}</p>
               <p className="product-rating">⭐ {item.rating}</p>
-
+              <button
+  onClick={() => toggleFavorite(item.id)}
+  aria-label={favorites.includes(item.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+>
+  {favorites.includes(item.id) ? '★' : '☆'}
+</button>
               {/* botón visible para abrir modal (accesible por teclado y screen readers) */}
               <button
                 type="button"
@@ -59,6 +66,7 @@ const Products: FC<ProductsProps> = ({ items, openModal }) => {
               >
                 Ver detalle
               </button>
+              
             </div>
           </div>
         </li>
@@ -67,4 +75,4 @@ const Products: FC<ProductsProps> = ({ items, openModal }) => {
   );
 };
 
-export default Products;
+export default memo(Products);
