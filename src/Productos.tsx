@@ -8,7 +8,7 @@ export interface Item {
   rating: number;
   thumbnail: string;
 }
-
+ 
 interface ProductsProps {
   items: Item[];
 }

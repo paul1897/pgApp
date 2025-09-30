@@ -9,8 +9,9 @@ function App() {
   const [filteredItems, setFilteredItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // items por página
+  
   useEffect(() => {
     fetch('/api/item.json')
       .then(res => {
@@ -28,11 +29,52 @@ function App() {
       });
   }, []);
 
-  
+  // Búsqueda con debounce
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const searchLower = search.toLowerCase();
+      setFilteredItems(
+        items.filter(item => item.title.toLowerCase().includes(searchLower))
+      );
+      setCurrentPage(1); // volver a la primera página al filtrar
+    }, 300); // debounce 300ms
+
+    return () => clearTimeout(handler);
+  }, [search, items]);
+
+  // Paginación
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  if (isLoading) return <p>Cargando items...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="app">
       <h1>Productos de Cocina</h1>
-      <Products items={filteredItems} />
+
+      <input
+        type="text"
+        placeholder="Buscar productos..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+      />
+
+      <Products items={currentItems} />
+
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => setCurrentPage(i + 1)}
+            disabled={currentPage === i + 1}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
