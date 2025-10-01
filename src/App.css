@@ -5,12 +5,6 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
@@ -128,6 +122,20 @@
 .info { color: #333; }
 .error { color: #b00020; }
 
+/* Centrar el grupo de búsqueda */
+.search-group {
+  display: flex;
+  justify-content: center; /* centra horizontalmente */
+  align-items: center;     /* centra verticalmente si hay varios elementos */
+  gap: 0.5rem;             /* espacio entre input y botón */
+  margin-bottom: 1rem;     /* espacio inferior opcional */
+}
+
+/* Opcional: que el input no sea demasiado grande */
+.search-group input {
+  width: 300px; /* ancho fijo */
+  max-width: 100%; /* responsivo en pantallas pequeñas */
+}
 
 /* ...tu CSS existente ... */
 

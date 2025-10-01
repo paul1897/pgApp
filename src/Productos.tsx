@@ -1,13 +1,12 @@
 import React, { memo } from 'react';
-import type { FC } from 'react';
 
 export type Item = {
-  id: string;
-  title: string;
-  category: string;
-  price: number;
-  rating: number;
-  thumbnail: string;
+    id: string;
+    title: string;
+    category: string;
+    price: number;
+    rating: number;
+    thumbnail: string;
 };
 
 interface ProductsProps {

@@ -85,18 +85,21 @@ useEffect(() => {
       >
         <h2 id="modal-title">{item.title}</h2>
         <div className="modal-body">
-          <img
-            src={item.thumbnail}
-            alt={item.title}
-            width={240}
-            height={160}
-            loading="lazy"
-            style={{ objectFit: 'cover' }}
-          />
-          <p><strong>Categoría:</strong> {item.category}</p>
-          <p><strong>Precio:</strong> ${item.price.toFixed(2)}</p>
-          <p><strong>Rating:</strong> ⭐ {item.rating}</p>
-        </div>
+  <div className="modal-image-wrapper">
+    <img
+      src={item.thumbnail}
+      alt={item.title}
+      width={240}
+      height={160}
+      loading="lazy"
+      style={{ objectFit: 'cover' }}
+    />
+  </div>
+  <p><strong>Categoría:</strong> {item.category}</p>
+  <p><strong>Precio:</strong> ${item.price.toFixed(2)}</p>
+  <p><strong>Rating:</strong> ⭐ {item.rating}</p>
+</div>
+
 
         <div className="modal-actions">
           <button onClick={onClose} className="btn-secondary">Cerrar</button>

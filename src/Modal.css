@@ -21,6 +21,12 @@
     display: block;
     margin-bottom: 0.5rem;
   }
+  .modal-image-wrapper {
+    display: flex;
+    justify-content: center; /* centra horizontal */
+    align-items: center;     /* centra vertical si quieres */
+    margin-bottom: 1rem;     /* espacio debajo de la imagen */
+  }
   
   .modal-actions {
     display: flex;

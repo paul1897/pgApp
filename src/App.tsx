@@ -17,7 +17,6 @@ function App() {
   // to return focus after closing modal
   const lastFocusedElement = useRef<HTMLElement | null>(null);
 
-
   // favoritos persistentes
   const [favorites, setFavorites] = useState<string[]>(() => {
     const saved = localStorage.getItem('favorites');
@@ -72,10 +71,6 @@ function App() {
 
     return () => clearTimeout(handler);
   }, [search, items]);
-
-
-  // dentro de App()
-
 const [currentPage, setCurrentPage] = useState(1);
 const itemsPerPage = 8; // muestra 5 por página
 
@@ -126,7 +121,7 @@ const goToPage = (page: number) => {
           <input
             id="search-input"
             type="text"
-            placeholder="Buscar productos..."
+            placeholder="Buscar productos"
             value={search}
             onChange={e => setSearch(e.target.value)}
             aria-label="Buscar productos"
@@ -154,14 +149,12 @@ const goToPage = (page: number) => {
           </button>
         </div>
       </header>
-
       <main aria-hidden={modalOpen ? 'true' : 'false'}>
         <Products items={currentItems} openModal={openModal} favorites={favorites} toggleFavorite={toggleFavorite} />
       </main>
 
       {modalOpen && selectedItem && <Modal item={selectedItem} onClose={closeModal} />}
-      
-      {/* pagination */}
+            {/* pagination */}
       <Paginacion
   totalPages={totalPages}
   currentPage={currentPage}
