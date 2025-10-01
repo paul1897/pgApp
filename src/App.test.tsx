@@ -26,7 +26,7 @@ describe('App component', () => {
   it('busca un elemento y muestra solo los productos coincidentes', async () => {
     render(<App />);
   
-    const input = await screen.findByPlaceholderText(/buscar productos/i);
+    const input = await screen.findByPlaceholderText(/Buscar productos/i);
     userEvent.type(input, 'Cuchillo');
   
     await waitFor(() => {
