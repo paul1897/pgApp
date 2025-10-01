@@ -37,8 +37,8 @@ function App() {
   const displayedItems = showFavorites
     ? filteredItems.filter(item => favorites.includes(item.id))
     : filteredItems;
+    
   // Debounce handler ref (optional cleanup)
-
   useEffect(() => {
     fetch('/api/item.json')
       .then(res => {
@@ -68,25 +68,21 @@ function App() {
         );
       }
     }, 300);
-
     return () => clearTimeout(handler);
   }, [search, items]);
+
 const [currentPage, setCurrentPage] = useState(1);
 const itemsPerPage = 8; // muestra 5 por página
-
 // calcular índices
 const indexOfLastItem = currentPage * itemsPerPage;
 const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 const currentItems = displayedItems.slice(indexOfFirstItem, indexOfLastItem);
-
 // total de páginas
 const totalPages = Math.ceil(displayedItems.length / itemsPerPage);
-
 const goToPage = (page: number) => {
   if (page < 1 || page > totalPages) return;
   setCurrentPage(page);
 };
-
   // Open modal and save the element that triggered it (to restore focus later)
   const openModal = (item: Item, triggerElement: HTMLElement | null) => {
     if (triggerElement) lastFocusedElement.current = triggerElement;
@@ -150,16 +146,15 @@ const goToPage = (page: number) => {
         </div>
       </header>
       <main aria-hidden={modalOpen ? 'true' : 'false'}>
-        <Products items={currentItems} openModal={openModal} favorites={favorites} toggleFavorite={toggleFavorite} />
+        <Products items={currentItems} openModal={openModal} favorites={favorites} toggleFavorite={toggleFavorite}    isFirstPage={currentPage === 1}/>
       </main>
 
       {modalOpen && selectedItem && <Modal item={selectedItem} onClose={closeModal} />}
             {/* pagination */}
       <Paginacion
-  totalPages={totalPages}
-  currentPage={currentPage}
-  goToPage={goToPage}
-/>
+          totalPages={totalPages}
+          currentPage={currentPage}
+          goToPage={goToPage}/>
     </div>
   );
 }

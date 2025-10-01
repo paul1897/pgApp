@@ -14,9 +14,11 @@ interface ProductsProps {
   openModal?: (item: Item, element: HTMLElement | null) => void;
   favorites: string[];
   toggleFavorite: (id: string) => void;
+  isFirstPage?: boolean; // <- NUEVO
+
 }
 
-const Products = ({ items, openModal, favorites, toggleFavorite }: ProductsProps) => {
+const Products = ({ items, openModal, favorites, toggleFavorite, isFirstPage }: ProductsProps) => {
     return (
     <ul className="product-list" role="list">
       {items.map(item => (
@@ -38,7 +40,8 @@ const Products = ({ items, openModal, favorites, toggleFavorite }: ProductsProps
                 alt={item.title}
                 width={150}
                 height={150}
-                loading="lazy"
+                loading={isFirstPage ? "eager" : "lazy"}
+                decoding="async"
                 style={{ objectFit: 'cover' }}
               />
             ) : (
@@ -51,11 +54,11 @@ const Products = ({ items, openModal, favorites, toggleFavorite }: ProductsProps
               <p className="product-price">${item.price.toFixed(2)}</p>
               <p className="product-rating">⭐ {item.rating}</p>
               <button
-  onClick={() => toggleFavorite(item.id)}
-  aria-label={favorites.includes(item.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
->
-  {favorites.includes(item.id) ? '★' : '☆'}
-</button>
+          onClick={() => toggleFavorite(item.id)}
+          aria-label={favorites.includes(item.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+        >
+          {favorites.includes(item.id) ? '★' : '☆'}
+        </button>
               {/* botón visible para abrir modal (accesible por teclado y screen readers) */}
               <button
                 type="button"

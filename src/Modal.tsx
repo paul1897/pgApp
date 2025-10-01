@@ -6,7 +6,6 @@ interface ModalProps {
   item: Item;
   onClose: () => void;
 }
-
 const Modal = ({ item, onClose }: ModalProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -19,8 +18,6 @@ const Modal = ({ item, onClose }: ModalProps) => {
     }
   }, []);
 
-  // Focus trap: manejar Tab / Shift+Tab para que no salga del modal
-  // Focus trap + Escape
 useEffect(() => {
   const node = ref.current;
   if (!node) return;
@@ -64,8 +61,6 @@ useEffect(() => {
   return () => node.removeEventListener('keydown', handleKeyDown);
 }, [onClose]);
 
-
-
   return (
     <div
       className="modal-backdrop"
@@ -99,7 +94,6 @@ useEffect(() => {
   <p><strong>Precio:</strong> ${item.price.toFixed(2)}</p>
   <p><strong>Rating:</strong> ⭐ {item.rating}</p>
 </div>
-
 
         <div className="modal-actions">
           <button onClick={onClose} className="btn-secondary">Cerrar</button>
