@@ -29,15 +29,15 @@
     { "id": "p_028", "title": "Espátula de silicona grande", "category": "Utensilios", "price": 6.0, "rating": 4.3, "thumbnail": "/public/images/28.jpeg" },
     { "id": "p_029", "title": "Licuadora profesional 2L", "category": "Electrodomésticos", "price": 99.0, "rating": 4.7, "thumbnail": "/public/images/29.jpeg" },
     { "id": "p_030", "title": "Olla de barro 3L", "category": "Ollas", "price": 28.0, "rating": 4.2, "thumbnail": "/public/images/30.jpeg" },
-    { "id": "p_031", "title": "Cuchara medidora acero inoxidable", "category": "Utensilios", "price": 4.0, "rating": 4.3, "thumbnail": "/public/images/31.jpg" },
-    { "id": "p_032", "title": "Sartén grill 26cm", "category": "Sartenes", "price": 39.0, "rating": 4.6, "thumbnail": "/public/images/32.jpg" },
-    { "id": "p_033", "title": "Set de cuchillos 3 piezas", "category": "Cuchillos", "price": 25.0, "rating": 4.4, "thumbnail": "/public/images/33.jpg" },
-    { "id": "p_034", "title": "Tetera cerámica 1L", "category": "Electrodomésticos", "price": 22.0, "rating": 4.2, "thumbnail": "/public/images/34.jpg" },
-    { "id": "p_035", "title": "Colador fino 15cm", "category": "Utensilios", "price": 5.5, "rating": 4.1, "thumbnail": "/public/images/35.jpg" },
-    { "id": "p_036", "title": "Olla cacerola 30cm", "category": "Ollas", "price": 60.0, "rating": 4.5, "thumbnail": "/public/images/36.jpg" },
-    { "id": "p_037", "title": "Batidora de mano 2 velocidades", "category": "Electrodomésticos", "price": 42.0, "rating": 4.4, "thumbnail": "/public/images/37.jpg" },
-    { "id": "p_038", "title": "Tabla de cortar bambú", "category": "Utensilios", "price": 10.0, "rating": 4.3, "thumbnail": "/public/images/38.jpg" },
-    { "id": "p_039", "title": "Sartén 28cm antiadherente", "category": "Sartenes", "price": 35.0, "rating": 4.5, "thumbnail": "/public/images/39.jpg" },
-    { "id": "p_040", "title": "Cuchillo multiusos 15cm", "category": "Cuchillos", "price": 18.0, "rating": 4.2, "thumbnail": "/public/images/40.jpg" }
+    { "id": "p_031", "title": "Cuchara medidora acero inoxidable", "category": "Utensilios", "price": 4.0, "rating": 4.3, "thumbnail": "/public/images/1.jpg" },
+    { "id": "p_032", "title": "Sartén grill 26cm", "category": "Sartenes", "price": 39.0, "rating": 4.6, "thumbnail": "/public/images/2.jpg" },
+    { "id": "p_033", "title": "Set de cuchillos 3 piezas", "category": "Cuchillos", "price": 25.0, "rating": 4.4, "thumbnail": "/public/images/3.jpg" },
+    { "id": "p_034", "title": "Tetera cerámica 1L", "category": "Electrodomésticos", "price": 22.0, "rating": 4.2, "thumbnail": "/public/images/4.jpg" },
+    { "id": "p_035", "title": "Colador fino 15cm", "category": "Utensilios", "price": 5.5, "rating": 4.1, "thumbnail": "/public/images/5.jpg" },
+    { "id": "p_036", "title": "Olla cacerola 30cm", "category": "Ollas", "price": 60.0, "rating": 4.5, "thumbnail": "/public/images/6.jpg" },
+    { "id": "p_037", "title": "Batidora de mano 2 velocidades", "category": "Electrodomésticos", "price": 42.0, "rating": 4.4, "thumbnail": "/public/images/7.jpg" },
+    { "id": "p_038", "title": "Tabla de cortar bambú", "category": "Utensilios", "price": 10.0, "rating": 4.3, "thumbnail": "/public/images/8.jpg" },
+    { "id": "p_039", "title": "Sartén 28cm antiadherente", "category": "Sartenes", "price": 35.0, "rating": 4.5, "thumbnail": "/public/images/9.jpg" },
+    { "id": "p_040", "title": "Cuchillo multiusos 15cm", "category": "Cuchillos", "price": 18.0, "rating": 4.2, "thumbnail": "/public/images/4.jpg" }
   ]
   
